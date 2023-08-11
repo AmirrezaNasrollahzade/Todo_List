@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:todo_list/constant.dart';
-import 'package:todo_list/data.dart';
-import 'package:todo_list/priority_choose_box.dart';
+import 'package:todo_list/util/constant.dart';
+import 'package:todo_list/database/data.dart';
+import 'package:todo_list/widgets/priority_choose_box.dart';
 
 class EditTaskScreen extends StatefulWidget {
   final TaskEntity newTaskEntity;

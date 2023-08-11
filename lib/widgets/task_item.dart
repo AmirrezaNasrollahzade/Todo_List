@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:todo_list/constant.dart';
-import 'package:todo_list/data.dart';
-import 'package:todo_list/edit_task_screen.dart';
-import 'package:todo_list/my_check_box.dart';
+import 'package:todo_list/util/constant.dart';
+import 'package:todo_list/database/data.dart';
+import 'package:todo_list/pages/edit_task_screen.dart';
+import 'package:todo_list/widgets/my_check_box.dart';
 
 class TaskItem extends StatefulWidget {
   static const double height = 84;

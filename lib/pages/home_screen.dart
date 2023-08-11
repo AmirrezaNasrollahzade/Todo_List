@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:todo_list/constant.dart';
-import 'package:todo_list/edit_task_screen.dart';
-import 'package:todo_list/empty_state.dart';
-import 'package:todo_list/task_item.dart';
-import 'data.dart';
+import 'package:todo_list/pages/edit_task_screen.dart';
+import 'package:todo_list/util/constant.dart';
+import 'package:todo_list/widgets/empty_state.dart';
+import 'package:todo_list/widgets/task_item.dart';
+import '../database/data.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

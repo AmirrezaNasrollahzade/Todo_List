@@ -1,7 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:todo_list/constant.dart';
+import 'package:todo_list/util/constant.dart';
 
 class PriorityChooseBox extends StatelessWidget {
   final String label;

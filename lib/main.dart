@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:todo_list/constant.dart';
-import 'package:todo_list/data.dart';
-import 'package:todo_list/home_screen.dart';
+import 'package:todo_list/util/constant.dart';
+import 'package:todo_list/database/data.dart';
+import 'package:todo_list/pages/home_screen.dart';
 
 void main() async {
   await Hive.initFlutter();
