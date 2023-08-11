@@ -5,11 +5,11 @@ import 'package:todo_list/constant.dart';
 import 'package:todo_list/data.dart';
 
 class EditTaskScreen extends StatefulWidget {
-  final TaskEntity taskEntity;
+  final TaskEntity newTaskEntity;
 
   const EditTaskScreen({
     Key? key,
-    required this.taskEntity,
+    required this.newTaskEntity,
   }) : super(key: key);
 
   @override
@@ -31,14 +31,12 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            final task = TaskEntity();
-            task.name = controller.text;
-            task.priority = Priority.low;
-            if (task.isInBox) {
-              task.save(); //Update
+            widget.newTaskEntity.name = controller.text;
+            if (widget.newTaskEntity.isInBox) {
+              widget.newTaskEntity.save(); //Update
             } else {
               final Box<TaskEntity> taskBox = Hive.box<TaskEntity>(taskBoxName);
-              taskBox.add(task); //Add
+              taskBox.add(widget.newTaskEntity); //Add
             }
             Navigator.of(context).pop();
           },
@@ -71,12 +69,13 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                     child: PriorityChooseBox(
                       gestureDetectorCallBack: () {
                         setState(() {
-                          widget.taskEntity.priority = Priority.high;
+                          widget.newTaskEntity.priority = Priority.high;
                         });
                       },
                       label: 'High',
-                      color: primaryColor,
-                      isSelected: widget.taskEntity.priority == Priority.high,
+                      color: highPriorityColor,
+                      isSelected:
+                          widget.newTaskEntity.priority == Priority.high,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -85,12 +84,13 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                     child: PriorityChooseBox(
                       gestureDetectorCallBack: () {
                         setState(() {
-                          widget.taskEntity.priority = Priority.normal;
+                          widget.newTaskEntity.priority = Priority.normal;
                         });
                       },
                       label: 'Normal',
-                      color: const Color(0xffF09819),
-                      isSelected: widget.taskEntity.priority == Priority.normal,
+                      color: normalPriorityColor,
+                      isSelected:
+                          widget.newTaskEntity.priority == Priority.normal,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -99,12 +99,12 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                     child: PriorityChooseBox(
                       gestureDetectorCallBack: () {
                         setState(() {
-                          widget.taskEntity.priority = Priority.low;
+                          widget.newTaskEntity.priority = Priority.low;
                         });
                       },
                       label: 'Low',
-                      color: const Color(0xff3BE1F1),
-                      isSelected: widget.taskEntity.priority == Priority.low,
+                      color: lowPriorityColor,
+                      isSelected: widget.newTaskEntity.priority == Priority.low,
                     ),
                   ),
                 ],
@@ -139,7 +139,6 @@ class PriorityChooseBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final ThemeData themeData = Theme.of(context);
     return InkWell(
       onTap: gestureDetectorCallBack,
       child: Container(
