@@ -6,15 +6,23 @@ import 'package:todo_list/edit_task_screen.dart';
 import 'data.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  TextEditingController controller = TextEditingController();
+  ValueNotifier<String> searchKeyWordNotifier = ValueNotifier("");
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     final Box<TaskEntity> taskBox = Hive.box<TaskEntity>(taskBoxName);
     return SafeArea(
       child: Scaffold(
+        
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
@@ -78,7 +86,12 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ],
                       ),
+                      //Search Task TextField
                       child: TextField(
+                        onChanged: (String value) {
+                          searchKeyWordNotifier.value = value;
+                        },
+                        controller: controller,
                         decoration: InputDecoration(
                           border: InputBorder.none, //new Learn
                           prefixIcon: const Icon(CupertinoIcons.search),
@@ -95,70 +108,85 @@ class HomeScreen extends StatelessWidget {
             ),
             Expanded(
               child: ValueListenableBuilder(
-                valueListenable: taskBox.listenable(),
-                builder: (context, box, child) {
-                  List<TaskEntity> listTask = taskBox.values.toList();
-                  return box.isNotEmpty
-                      ? ListView.builder(
-                          padding: const EdgeInsets.all(10),
-                          itemCount: taskBox.values.length + 1,
-                          itemBuilder: (context, index) {
-                            if (index == 0) {
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                valueListenable: searchKeyWordNotifier,
+                builder: (context, value, child) {
+                  return ValueListenableBuilder(
+                    valueListenable: taskBox.listenable(),
+                    builder: (context, box, child) {
+                      final List<TaskEntity> items;
+                      if (controller.text.isEmpty) {
+                        items = taskBox.values.toList();
+                      } else {
+                        items = box.values
+                            .where(
+                                (task) => task.name.contains(controller.text))
+                            .toList();
+                      }
+                      return box.isNotEmpty
+                          ? ListView.builder(
+                              padding: const EdgeInsets.all(10),
+                              itemCount: items.length + 1,
+                              itemBuilder: (context, index) {
+                                if (index == 0) {
+                                  return Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        'Today',
-                                        style: themeData.textTheme.headline6!
-                                            .apply(
-                                          color: themeData
-                                              .colorScheme.onBackground,
-                                          fontSizeFactor: 0.9,
-                                        ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Today',
+                                            style: themeData
+                                                .textTheme.headline6!
+                                                .apply(
+                                              color: themeData
+                                                  .colorScheme.onBackground,
+                                              fontSizeFactor: 0.9,
+                                            ),
+                                          ),
+                                          Container(
+                                            margin:
+                                                const EdgeInsets.only(top: 5),
+                                            height: 3,
+                                            width: 60,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  themeData.colorScheme.primary,
+                                              borderRadius:
+                                                  BorderRadius.circular(1.5),
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                      Container(
-                                        margin: const EdgeInsets.only(top: 5),
-                                        height: 3,
-                                        width: 60,
-                                        decoration: BoxDecoration(
-                                          color: themeData.colorScheme.primary,
-                                          borderRadius:
-                                              BorderRadius.circular(1.5),
+                                      MaterialButton(
+                                        color: const Color(0xffEAEFF5),
+                                        textColor: secondaryTextColor,
+                                        onPressed: () async {
+                                          await box.clear();
+                                        },
+                                        elevation: 0,
+                                        child: const Row(
+                                          children: [
+                                            Text(
+                                              'Delete All',
+                                            ),
+                                            SizedBox(width: 4),
+                                            Icon(CupertinoIcons.delete_solid),
+                                          ],
                                         ),
                                       )
                                     ],
-                                  ),
-                                  MaterialButton(
-                                    color: const Color(0xffEAEFF5),
-                                    textColor: secondaryTextColor,
-                                    onPressed: () async {
-                                      await box.clear();
-                                    },
-                                    elevation: 0,
-                                    child: const Row(
-                                      children: [
-                                        Text(
-                                          'Delete All',
-                                        ),
-                                        SizedBox(width: 4),
-                                        Icon(CupertinoIcons.delete_solid),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              );
-                            } else {
-                              final TaskEntity task = listTask[index - 1];
-                              return TaskItem(task: task);
-                            }
-                          },
-                        )
-                      : const EmptyState();
+                                  );
+                                } else {
+                                  return TaskItem(task: items[index - 1]);
+                                }
+                              },
+                            )
+                          : const EmptyState();
+                    },
+                  );
                 },
               ),
             ),

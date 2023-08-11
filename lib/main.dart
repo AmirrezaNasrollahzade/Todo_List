@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
           ),
         )),
         inputDecorationTheme: const InputDecorationTheme(
+          floatingLabelBehavior: FloatingLabelBehavior.never,
           labelStyle: TextStyle(color: secondaryTextColor),
           iconColor: secondaryTextColor,
         ),
