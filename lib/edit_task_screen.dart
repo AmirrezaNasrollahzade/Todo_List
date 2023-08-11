@@ -17,8 +17,12 @@ class EditTaskScreen extends StatefulWidget {
 }
 
 class _EditTaskScreenState extends State<EditTaskScreen> {
-  TextEditingController controller = TextEditingController();
-
+  late final TextEditingController controller =
+      TextEditingController(text: widget.newTaskEntity.name);
+  final SnackBar snackBar = const SnackBar(
+    
+    content: Text('Your task cant be empty.'),
+  );
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
@@ -31,14 +35,19 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            widget.newTaskEntity.name = controller.text;
-            if (widget.newTaskEntity.isInBox) {
-              widget.newTaskEntity.save(); //Update
+            if (controller.text == "") {
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
             } else {
-              final Box<TaskEntity> taskBox = Hive.box<TaskEntity>(taskBoxName);
-              taskBox.add(widget.newTaskEntity); //Add
+              widget.newTaskEntity.name = controller.text;
+              if (widget.newTaskEntity.isInBox) {
+                widget.newTaskEntity.save(); //Update
+              } else {
+                final Box<TaskEntity> taskBox =
+                    Hive.box<TaskEntity>(taskBoxName);
+                taskBox.add(widget.newTaskEntity); //Add
+              }
+              Navigator.of(context).pop();
             }
-            Navigator.of(context).pop();
           },
           label: const Row(
             children: [
@@ -112,9 +121,11 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
               const SizedBox(height: 24),
               TextField(
                 controller: controller,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   border: InputBorder.none,
-                  label: Text("Add Task for To day"),
+                  label: Text(widget.newTaskEntity.name.isEmpty
+                      ? "Add Task for To day"
+                      : "Edit Your Task"),
                 ),
               ),
             ],
