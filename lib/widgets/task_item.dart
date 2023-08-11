@@ -66,6 +66,7 @@ class _TaskItemState extends State<TaskItem> {
               checkBox: () {
                 setState(() {
                   widget.task.isCompleted = !widget.task.isCompleted;
+                  widget.task.save();
                 });
               },
             ),
