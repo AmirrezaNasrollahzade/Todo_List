@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_list/data/repository/repository.dart';
+import 'package:todo_list/data/source/hive_task_source.dart';
 import 'package:todo_list/util/constant.dart';
-import 'package:todo_list/database/data.dart';
-import 'package:todo_list/pages/home_screen.dart';
+import 'package:todo_list/data/model/data.dart';
+import 'package:todo_list/pages/home/home_screen.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -12,9 +14,18 @@ void main() async {
   Hive.registerAdapter(TaskEntityAdapter());
   Hive.registerAdapter(PriorityAdapter());
   await Hive.openBox<TaskEntity>(taskBoxName);
+  //SetSystemUIOverlayStyle
   SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(statusBarColor: primaryColor));
-  runApp(const MyApp());
+  // //Providers
+  // Provider.debugCheckInvalidValueType = null;
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => Repository(
+          localDataSource: HiveTaskDataSource(box: Hive.box(taskBoxName))),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -26,13 +37,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme(const TextTheme(
-          headline6: TextStyle(
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
             color: backgroundColor,
           ),
-        )),
+        ),
         inputDecorationTheme: const InputDecorationTheme(
           floatingLabelBehavior: FloatingLabelBehavior.never,
           labelStyle: TextStyle(color: secondaryTextColor),
